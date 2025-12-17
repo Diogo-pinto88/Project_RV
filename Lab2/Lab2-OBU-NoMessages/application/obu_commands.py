@@ -136,5 +136,18 @@ def stop_car(movement_control_txd_queue):
 	movement_control_txd_queue.put(car_control_msg)
 	return
 
+def park_car_init(my_system_rxd_queue):
+	if (app_conf.debug_app) or (app_conf.debug_obu):
+		print ('obu_application: park_car')
+	car_control_msg="p"
+	my_system_rxd_queue.put(car_control_msg)
+	return
+
+def park_car_end(my_system_rxd_queue):
+	if (app_conf.debug_app) or (app_conf.debug_obu):
+		print ('obu_application: park_car_end')
+	car_control_msg="o"
+	my_system_rxd_queue.put(car_control_msg)
+	return
 
 

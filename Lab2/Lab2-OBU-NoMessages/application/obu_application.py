@@ -120,6 +120,10 @@ def obu_system(obd_2_interface, start_flag, coordinates, my_system_rxd_queue, mo
             car_move_slower(movement_control_txd_queue)
         elif (data == 's'):
             stop_car(movement_control_txd_queue)
+        elif (data == 'p'):
+            park_car_init(my_system_rxd_queue)
+        elif (data == 'o'):
+            park_car_end(my_system_rxd_queue)
         else:
             print('Invalid command')
 

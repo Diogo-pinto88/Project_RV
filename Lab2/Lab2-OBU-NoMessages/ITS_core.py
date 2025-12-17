@@ -31,6 +31,7 @@ import ITS_options as its_conf
 
 # QUEUES - used to tranfer messages between adjacent layers of the protocol stack
 my_system_rxd_queue=Queue()
+driver_queue=Queue()
 movement_control_txd_queue=Queue()
 rsu_control_txd_queue=Queue()
 ca_service_txd_queue=Queue()
@@ -150,7 +151,7 @@ def main(argv):
 			# 			  	coordinates: last known coordinates
 			#  			  	my_system_rxd_queue: queue to receive data from other application layer threads relevant for business logic decision-process 
 			#             	movement_control_txd_queue: queue to send commands to control vehicles movement
-			t=Thread(target=obu_system, args=(node_interface, start_flag, coordinates, my_system_rxd_queue, movement_control_txd_queue,))
+			t=Thread(target=obu_system, args=(node_interface, start_flag, coordinates, my_system_rxd_queue, driver_queue, movement_control_txd_queue,))
 			t.start()
 			threads.append(t)
 	
@@ -407,6 +408,17 @@ def main(argv):
 			t=Thread(target=update_location, args=(node_interface, start_flag, coordinates, visual, ))
 			t.start()
 			threads.append(t)
+
+			# Thread - driver: full vehicle driving logic
+			# Arguments  -  node_interface: dictionary that contains the current node status
+			#               start_flag: thread execution control flag
+			#               coordinates: dictionary with (x,y) coordinates and time instant t
+			#               driver_txd_queue: queue used by the application layer to influence driver decisions
+			# 				movement_control_txd_queue: fila que recebe os comandos para o controlo do carro a partir aplicacao.
+			t = Thread(target=driver, args=(node_interface, start_flag, coordinates, driver_queue, movement_control_txd_queue,))
+			t.start()
+			threads.append(t)
+			
 
 			# Thread- movement control: to control the movement of the vehicles
 			# Arguments  - 	node_interface: dictionary that contains the current node status 
