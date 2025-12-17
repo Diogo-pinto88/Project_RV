@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VSCode
+.vscode/
+.history/
+
+# macOS
+.DS_Store
+
+# Logs / runtime
+*.log
+*.tmp
+
+# Virtual environments
+venv/
+.env/
+
+# Output folders
+output/
