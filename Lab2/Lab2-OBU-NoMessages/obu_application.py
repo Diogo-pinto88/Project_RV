@@ -73,7 +73,6 @@ def obu_system(node, node_type, start_flag, coordinates, obd_2_interface, my_sys
       if (app_conf.debug_sys):
          print('STATUS: Ready to start - THREAD: my_system - NODE: {}'.format(node),'\n')
      
-
       open_car(movement_control_txd_queue)
       turn_on_car(movement_control_txd_queue)
       car_move_forward(movement_control_txd_queue)
@@ -87,7 +86,6 @@ def obu_system(node, node_type, start_flag, coordinates, obd_2_interface, my_sys
                               stop_car(movement_control_txd_queue)
                         elif event['event_type']=='yellow_tls':      
                               car_move_slower(movement_control_txd_queue)
-                        
                         else:
                               car_move_forward(movement_control_txd_queue)
 

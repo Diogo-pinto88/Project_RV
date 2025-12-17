@@ -60,6 +60,9 @@ def obu_system(obd_2_interface, start_flag, coordinates, my_system_rxd_queue, mo
     while not start_flag.isSet():
         time.sleep(1)
 
+    #timer for parking
+    start_flag["parking_start_time"] = time.time()
+
     if (app_conf.debug_sys):
         print('STATUS: Ready to start AUTONOMOUS SEQUENCE - NODE: {}'.format(obd_2_interface["node_id"]), '\n')
 
