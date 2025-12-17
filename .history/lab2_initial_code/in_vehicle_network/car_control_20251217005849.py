@@ -30,35 +30,6 @@ def update_location(node_interface, start_flag, coordinates, visual):
 		position_update(coordinates, node_interface, visual)
 	return
 
-#-----------------------------------------------------------------------------------------
-# Thread - driver: human driving behavior (decision-making only)
-#-----------------------------------------------------------------------------------------
-def driver(node_interface, start_flag, coordinates, driver_txd_queue, movement_control_txd_queue):
-
-	node = node_interface['node_id']
-
-	while not start_flag.isSet():
-		time.sleep(1)
-
-	if app_conf.debug_sys:
-		print(f"STATUS: Ready - THREAD: driver - NODE: {node}")
-
-	while True:
-		decision = driver_txd_queue.get()
-
-		if decision == 'drive':
-			movement_control_txd_queue.put('f')
-			movement_control_txd_queue.put('i')
-
-		elif decision == 'slow':
-			movement_control_txd_queue.put('d')
-
-		elif decision == 'stop':
-			movement_control_txd_queue.put('s')
-
-		elif decision == 'park':
-			movement_control_txd_queue.put('s')
-			
 
 #-----------------------------------------------------------------------------------------
 # Car Finite State Machine
@@ -142,5 +113,5 @@ def movement_control(obd_2_interface, start_flag, coordinates, movement_control_
 				print ('ERROR: movement control -> invalid status\n\n')
 
 		#time.sleep(app_obu_conf.movement_update_time)
-
+		
 	return

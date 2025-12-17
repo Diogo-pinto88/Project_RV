@@ -33,7 +33,7 @@ def update_location(node_interface, start_flag, coordinates, visual):
 #-----------------------------------------------------------------------------------------
 # Thread - driver: human driving behavior (decision-making only)
 #-----------------------------------------------------------------------------------------
-def driver(node_interface, start_flag, coordinates, driver_txd_queue, movement_control_txd_queue):
+def driver(node_interface, start_flag, coordinates, driver_queue, movement_control_txd_queue):
 
 	node = node_interface['node_id']
 
@@ -44,7 +44,8 @@ def driver(node_interface, start_flag, coordinates, driver_txd_queue, movement_c
 		print(f"STATUS: Ready - THREAD: driver - NODE: {node}")
 
 	while True:
-		decision = driver_txd_queue.get()
+		# espera decisão do OBU (ou comportamento autónomo)
+		decision = driver_queue.get()
 
 		if decision == 'drive':
 			movement_control_txd_queue.put('f')

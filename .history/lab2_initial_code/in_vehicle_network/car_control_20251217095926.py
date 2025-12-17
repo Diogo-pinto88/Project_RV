@@ -33,32 +33,33 @@ def update_location(node_interface, start_flag, coordinates, visual):
 #-----------------------------------------------------------------------------------------
 # Thread - driver: human driving behavior (decision-making only)
 #-----------------------------------------------------------------------------------------
-def driver(node_interface, start_flag, coordinates, driver_txd_queue, movement_control_txd_queue):
+def driver(node_interface, start_flag, coordinates, driver_txd_queue):
 
+	driver_time = 1
 	node = node_interface['node_id']
 
 	while not start_flag.isSet():
 		time.sleep(1)
 
-	if app_conf.debug_sys:
-		print(f"STATUS: Ready - THREAD: driver - NODE: {node}")
+	if (app_conf.debug_sys):
+		print('STATUS: Ready to start - THREAD: driver - NODE: {}\n'.format(node), '\n')
+
+	parked = False
 
 	while True:
-		decision = driver_txd_queue.get()
+		time.sleep(driver_time)
 
-		if decision == 'drive':
-			movement_control_txd_queue.put('f')
-			movement_control_txd_queue.put('i')
-
-		elif decision == 'slow':
-			movement_control_txd_queue.put('d')
-
-		elif decision == 'stop':
-			movement_control_txd_queue.put('s')
-
-		elif decision == 'park':
-			movement_control_txd_queue.put('s')
+		if not parked:
+			# Driver decides to move forward, backward, increase speed or decrease speed
+			driver_txd_queue.put('f')
+			driver_txd_queue.put('b')
+			driver_txd_queue.put('i')
+			driver_txd_queue.put('d')
 			
+		# Driver decides to stop and park
+		if not parked:
+			driver_txd_queue.put('s')
+			parked = True
 
 #-----------------------------------------------------------------------------------------
 # Car Finite State Machine

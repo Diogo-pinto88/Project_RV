@@ -413,8 +413,7 @@ def main(argv):
 			#               start_flag: thread execution control flag
 			#               coordinates: dictionary with (x,y) coordinates and time instant t
 			#               driver_txd_queue: queue used by the application layer to influence driver decisions
-			# 				movement_control_txd_queue: fila que recebe os comandos para o controlo do carro a partir aplicacao.
-			t = Thread(target=driver, args=(node_interface, start_flag, coordinates, driver_txd_queue, movement_control_txd_queue,))
+			t = Thread(target=driver, args=(node_interface, start_flag, coordinates, driver_txd_queue, ))
 			t.start()
 			threads.append(t)
 			
@@ -424,7 +423,7 @@ def main(argv):
 			#			 				coordinates: dictionay with (x,y) coordinates and time instant t of measurement
 			#						  	node_interface: dictionary with the movement information of the car
 			#						  	movement_control_txd_queue: fila que recebe os comandos para o controlo do carro a partir aplicacao.
-			t=Thread(target=movement_control, args=(node_interface, start_flag, coordinates, movement_control_txd_queue,))
+			t=Thread(target=movement_control, args=(node_interface, start_flag, coordinates,  driver_txd_queue,))
 			t.start()
 			threads.append(t)
 			

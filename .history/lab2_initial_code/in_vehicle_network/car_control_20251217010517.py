@@ -31,34 +31,68 @@ def update_location(node_interface, start_flag, coordinates, visual):
 	return
 
 #-----------------------------------------------------------------------------------------
-# Thread - driver: human driving behavior (decision-making only)
+# Thread - driver: full vehicle driving behavior.
+#         The driver is responsible for controlling the vehicle movement,
+#         including acceleration, braking, forward/backward motion and
+#         deciding when to stop and attempt parking.
+#         Note: This thread abstracts the human driver behavior and does not
+#         include any ITS logic or permission validation.
 #-----------------------------------------------------------------------------------------
-def driver(node_interface, start_flag, coordinates, driver_txd_queue, movement_control_txd_queue):
+def driver(node_interface, start_flag, coordinates, driver_txd_queue):
+
+	driver_time = 1
 
 	node = node_interface['node_id']
-
 	while not start_flag.isSet():
 		time.sleep(1)
 
-	if app_conf.debug_sys:
-		print(f"STATUS: Ready - THREAD: driver - NODE: {node}")
+	if (app_conf.debug_sys):
+		print('STATUS: Ready to start - THREAD: driver - NODE: {}\n'.format(node), '\n')
+
+	# Initial driving state
+	speed = node_interface.get('speed', 0)
+	direction = node_interface.get('direction', 1)  # 1 = forward, -1 = backward
+	parked = False
 
 	while True:
-		decision = driver_txd_queue.get()
+		time.sleep(driver_time)
 
-		if decision == 'drive':
-			movement_control_txd_queue.put('f')
-			movement_control_txd_queue.put('i')
+		#-------------------------------------------------
+		# Normal driving behavior
+		#-------------------------------------------------
+		if not parked:
+			# Accelerate until a target speed
+			if speed < 20:
+				speed = speed + 1
+				node_interface['speed'] = speed
 
-		elif decision == 'slow':
-			movement_control_txd_queue.put('d')
+			# Move vehicle forward
+			coordinates['x'] = coordinates['x'] + direction * speed * 0.1
+			coordinates['t'] = repr(time.time())
 
-		elif decision == 'stop':
-			movement_control_txd_queue.put('s')
+		#-------------------------------------------------
+		# Decision to stop and attempt parking
+		#-------------------------------------------------
+		if speed >= 20 and not parked:
+			# Brake the vehicle
+			speed = 0
+			node_interface['speed'] = speed
 
-		elif decision == 'park':
-			movement_control_txd_queue.put('s')
-			
+			# Driver decides to park
+			parked = True
+
+		#-------------------------------------------------
+		# Parking maneuver (simple example)
+		#-------------------------------------------------
+		if parked:
+			# Small backward movement to simulate parking
+			coordinates['x'] = coordinates['x'] - 0.5
+			coordinates['t'] = repr(time.time())
+
+			# Vehicle is now parked
+			node_interface['speed'] = 0
+
+	return
 
 #-----------------------------------------------------------------------------------------
 # Car Finite State Machine

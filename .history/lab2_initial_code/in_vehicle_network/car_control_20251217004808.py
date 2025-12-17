@@ -30,35 +30,6 @@ def update_location(node_interface, start_flag, coordinates, visual):
 		position_update(coordinates, node_interface, visual)
 	return
 
-#-----------------------------------------------------------------------------------------
-# Thread - driver: human driving behavior (decision-making only)
-#-----------------------------------------------------------------------------------------
-def driver(node_interface, start_flag, coordinates, driver_txd_queue, movement_control_txd_queue):
-
-	node = node_interface['node_id']
-
-	while not start_flag.isSet():
-		time.sleep(1)
-
-	if app_conf.debug_sys:
-		print(f"STATUS: Ready - THREAD: driver - NODE: {node}")
-
-	while True:
-		decision = driver_txd_queue.get()
-
-		if decision == 'drive':
-			movement_control_txd_queue.put('f')
-			movement_control_txd_queue.put('i')
-
-		elif decision == 'slow':
-			movement_control_txd_queue.put('d')
-
-		elif decision == 'stop':
-			movement_control_txd_queue.put('s')
-
-		elif decision == 'park':
-			movement_control_txd_queue.put('s')
-			
 
 #-----------------------------------------------------------------------------------------
 # Car Finite State Machine
@@ -144,3 +115,65 @@ def movement_control(obd_2_interface, start_flag, coordinates, movement_control_
 		#time.sleep(app_obu_conf.movement_update_time)
 
 	return
+
+
+def driver(node_interface, start_flag, coordinates, driver_txd_queue):
+	"""
+    Driver thread: fully autonomous vehicle driving logic.
+    The driver is responsible for:
+      - driving the vehicle (forward/backward)
+      - accelerating and braking
+      - deciding when to stop and attempt parking
+
+    The driver does NOT:
+      - communicate with RSU
+      - process ITS messages
+      - validate permissions
+    """
+
+    # Espera que todas as threads arranquem
+    start_flag.wait()
+
+    # Estado interno do condutor
+    speed = node_interface.get("speed", 0)
+    direction = node_interface.get("direction", 1)  # 1 = forward, -1 = backward
+    parked = False
+
+    while True:
+        try:
+            # ---------------- CONDUÇÃO NORMAL ----------------
+            if not parked:
+                # acelerar até um limite simples
+                if speed < 20:
+                    speed += 1
+                node_interface["speed"] = speed
+
+                # mover o carro (eixo x como exemplo)
+                coordinates["x"] += direction * speed * 0.1
+                coordinates["t"] = repr(time.time())
+
+            time.sleep(1)
+
+            # ---------------- DECISÃO DE PARAR ----------------
+            if speed >= 20:
+                speed = 0
+                node_interface["speed"] = speed
+
+                # o condutor decide estacionar
+                parked = True
+
+            # ---------------- MANOBRA DE ESTACIONAMENTO ----------------
+            if parked:
+                # pequena manobra para trás
+                coordinates["x"] -= 0.5
+                coordinates["t"] = repr(time.time())
+                time.sleep(1)
+
+                # estacionado
+                node_interface["speed"] = 0
+
+                # permanece estacionado
+                time.sleep(5)
+
+        except Exception:
+            break
