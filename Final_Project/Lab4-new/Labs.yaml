@@ -1,0 +1,172 @@
+Labs. information
+
+Lab I.1: Traffic light system control
+
+    Goal: Traffic light system using GPIO
+
+    Components: RSU: 1  
+                OBU: 0  
+                AU: 0
+    Communications: External: none  
+                    Internal: GPIO
+        Messages: none
+
+    Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_rsu = 1 
+        Mensagens de controlo da rsu:   debug_rsu_control = 1
+        Mensagens de controlo de GPIO:  debug_gpio = 1
+
+    Configuration options: /application/app_config_rsu.py
+        Tempo até iniciar funcionamento: warm_up_time = 10
+                   
+    Command parameters: ITS_core.py 1 or ITS_core.py 2
+
+    Expected outcome: Traffic light controlled by user input
+
+Lab I.2: Automatic traffic light system control
+
+    Goal: Automatic traffic light system 
+
+    Components: RSU: 1  
+                OBU: 0  
+                AU: 0
+    Communications: External: none  
+                    Internal: GPIO
+        Messages: none
+
+    Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_rsu = 1 
+
+    Configuration options: /application/app_config_rsu.py
+        Tempo até iniciar funcionamento: blinking_time = 5
+                   
+    Command parameters: ITS_core.py 1 or ITS_core.py 2
+
+    Expected outcome: Automatic traffic light 
+
+--------------------------------------------------------
+Lab II.1: Cooperative awareness in vehicular network
+
+    Goal: CA messages dissemination by RSU
+
+    Components: RSU:    1  
+                OBU:    1  
+                AU:     0
+    Communications:     I2X
+        Messages:       CA
+
+    Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_rsu = 1 
+        Mensagens de comunicação CA:    debug_ap_ca=1
+    
+    Configuration options: /application/app_config_rsu.py
+        Período das mensagens CA:         ca_generation_interval = 10
+
+            
+    Command parameters: ITS_core.py 1 and ITS_core.py 2 or        
+                        ITS_core.py 1 and  ITS_core.py 4 
+
+    Expected outcome: CA messages send by RSU and received by RSU and OBU
+
+Lab II.2: Cooperative awareness in vehicular networ
+
+    Goal: CA messages dissemination by RSU and OBU
+
+    Components: RSU:    1  
+                OBU:    1  
+                AU:     0
+    Communications:     I2X and V2X
+        Messages:       CA
+
+    Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_rsu = 1  or debug_obu = 1
+        Mensagens de comunicação CA:    debug_ap_ca=1
+    
+    Configuration options: /application/app_config_rsu.py
+        Período das mensagens CA:        ca_generation_interval = 10
+
+    Configuration options: /application/app_config_obu.py
+        Período das mensagens CA:        ca_generation_interval = 5
+            
+    Command parameters: ITS_core.py 1 and ITS_core.py 2 or
+                        ITS_core.py 1 and ITS_core.py 4 or
+                        ITS_core.py 4 and ITS_core.py 5 
+
+    Expected outcome: CA messages send by RSU and received by RSU and OB
+
+Lab III.1: Car control system
+
+    Goal: Control car motors using GPIO
+
+    Components: RSU: 0  
+                OBU: 1  
+                AU:  0
+    Communications: External: none  
+                    Internal: GPIO
+    Messages: none
+
+    Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_obu = 1 
+        Mensagens de controlo da obu:   debug_obu_control = 1
+        Mensagens de controlo de GPIO:  debug_gpio = 1
+
+    Configuration options: /application/app_config_obu.py
+        Tempo até iniciar funcionamento:   warm_up_time = 10
+                   
+    Command parameters: ITS_core.py 4 or ITS_core.py 5
+
+    Expected outcome: Car movement controlled by user input
+
+Lab III.2: Traffic light and Car control system
+
+    Goal: Control car motors using GPIO
+
+    Components: RSU: 1  
+                OBU: 1  
+                AU:  0
+    Communications: External: none  
+                    Internal: GPIO
+    Messages: none
+
+    Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_obu = 1 
+        Mensagens de controlo da obu:   debug_obu_control = 1
+        Mensagens de controlo de GPIO:  debug_gpio = 1
+
+    Configuration options: /application/app_config_obu.py
+        Tempo até iniciar funcionamento:   warm_up_time = 10
+                   
+    Command parameters: ITS_core.py 1 and ITS_core.py 4
+
+    Expected outcome: Traffic light and car movement controlled by user input
+
+Lab IV.1: Traffic light controls car movement uisng vehicular network
+
+    Goal: Control car motors through traffic light system DEN messages
+
+    Components: RSU: 1  
+                OBU: 1  
+                AU:  0
+    Communications: External: I2V 
+                    Internal: GPIO
+    Messages: DEN (RSU)
+                  
+
+  Debug options: /application/app_config.py
+        Mensagens de aplicacao:         debug_app = 1 or debug_rsu = 1 
+        Mensagens de comunicação DEB:    debug_ap_den=1   
+
+    Configuration options: /application/app_config_rsu.py
+        Período das mensagens DEB:        den_interval = 10
+        DEN messages parameters: green, yellow and red
+                   
+    Command parameters: ITS_core.py 1 and ITS_core.py 4
+
+    Expected outcome: Traffic light controls car movement using DEN messages
+
+
+    Nota: pygame so fica instalado no ambiente da janela
+    usei os seguintes comandos:
+    python3 -m venv path/to/venv
+    source path/to/venv/bin/activate
+    python3 -m pip install pygame
